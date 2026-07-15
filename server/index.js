@@ -23,20 +23,32 @@ app.get('/api/weather', async (req, res) => {
     console.log(`Fetching weather for city: ${city}`);
     try {
         const response = await fetchFromApi(
-            `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=7`
+            `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=7`
         );
 
         if (!response.ok) {
-            console.error('weather API responded with status', response.status);
-            const errorData = await response.json().catch(() => null);
-            return res.status(response.status).json({ error: errorData?.error?.message || 'Failed to fetch from weather API.' });
+            const responseText = await response.text().catch(() => null);
+            console.error('weather API responded with status', response.status, 'body:', responseText);
+            let errorMessage = 'Failed to fetch from weather API.';
+            try {
+                const errorData = responseText ? JSON.parse(responseText) : null;
+                if (errorData?.error?.message) {
+                    errorMessage = errorData.error.message;
+                }
+            } catch {
+                // ignore parse errors and keep the raw text
+                if (responseText) {
+                    errorMessage = responseText;
+                }
+            }
+            return res.status(response.status).json({ error: errorMessage });
         }
 
         const data = await response.json();
         res.json(data);
     } catch (e) {
-        console.error('weather API error', e);
-        res.status(500).json({ error: 'Error fetching weather data.' });
+        console.error('weather API error', e?.message || e);
+        res.status(500).json({ error: e?.message || 'Error fetching weather data.' });
     }
 });
 app.listen(PORT, () => {

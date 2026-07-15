@@ -4,6 +4,9 @@ import './SearchBar.css';
 
 const SearchBar = ({ onSearch }) => {
     const [city, setCity] = useState('');
+    
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -24,7 +27,7 @@ const SearchBar = ({ onSearch }) => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
             />
-            <button type="submit" className="search-button">Search</button>
+            <button type="submit">Search</button>
         </form>
     );
 };
