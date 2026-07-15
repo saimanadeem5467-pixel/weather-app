@@ -1,0 +1,30 @@
+.hourly-container {
+    display: flex;
+    overflow-x: auto;
+    max-width: 100%;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-radius: 16px;
+}
+
+.hour-card {
+    min-width: 90px;
+    padding: 0.75rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    color: #fff;
+}
+
+.hour-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0.25rem auto;
+}
+
+.hour-time,
+.hour-temp,
+.hour-rain {
+    font-size: 0.9rem;
+}

@@ -1,32 +1,54 @@
-.weather-container {
- max-width: 600px;
- margin: 20px auto;
- padding: 20px;
- background:rgba(255, 255, 255, 0.2);
- backdrop-filter: blur(10px);
- -webkit-backdrop-filter: blur(10px);
- border-radius: 12px;
- box-shadow: 0 2px 4px rgba(25, 66, 156, 0.1);
- text-align: center;
- border: 1px solid rgba(255, 255, 255, 0.3);
- 
- }
-.weather-info{
-    margin-top:20px;
-    color:#fff;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: center;
-    flex-direction: column;
+.bg-sunrise {
+    background: linear-gradient(to bottom, #ff7e5f, #feb47b);
 }
-body{
-    background: url('https://github.com/gauravghai/weatherApp-Reactjs/blob/master/src/images/background.jpg?raw=true');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+
+.bg-day {
+    background: linear-gradient(to bottom, #094c5f, #0072ff);
+}
+
+.bg-sunset {
+    background: linear-gradient(to bottom, #302b97, #323897);
+}
+
+.bg-night {
+    background: linear-gradient(to bottom, #2c3e50, #4ca1ff);
+}
+
+.app {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+}
+
+.weather-container {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 760px);
+    color: #fff;
+}
+
+.status-text {
+    color: #fff;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
     background-attachment: fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;    
-    -o-background-size: cover;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
 }

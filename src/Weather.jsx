@@ -1,66 +1,84 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { WiDaySunny, WiCloud, WiThermometer, WiHumidity } from 'react-icons/wi';
+import { useState, useEffect } from 'react';
+import SearchBar from './component/SearchBar.jsx';
+import CurrentWeather from './component/CurrentWeather.jsx';
+import HourlyForecast from './component/HourlyForecast.jsx';
+import WeeklyForecast from './component/WeeklyForecast.jsx';
+import { getWeatherData } from './assets/api.js';
+import { parse } from 'date-fns';
 
+const getGradientClass = (hour) => {
+  if (hour >= 6 && hour < 9) return 'bg-sunrise';
+  if (hour >= 9 && hour < 17) return 'bg-day';
+  if (hour >= 17 && hour < 20) return 'bg-sunset';
+  return 'bg-night';
+};
 
 function Weather() {
   const [city, setCity] = useState('');
-  const [weather, setWeather] = useState(null); 
+  const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-  };
+  const hour = weatherData?.location?.localtime
+    ? (() => {
+        try {
+          return parse(weatherData.location.localtime, 'yyyy-MM-dd HH:mm', new Date()).getHours();
+        } catch {
+          return new Date().getHours();
+        }
+      })()
+    : new Date().getHours();
 
-  const fetchWeatherData = async () => {
-    try {
-      setError('');
-      const response = await axios.get(
-         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${'14a13aa17e552bb1d91a34614925601e'}`);
- setWeather(response);
-    } catch (error) {
-      setError('City not found or API error.');  
-      console.log('Error fetching weather data:', error);
+  useEffect(() => {
+    if (!city) {
+      return;
     }
-  };
+
+    const fetchWeather = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const data = await getWeatherData(city);
+        const forecastDay = data?.forecast?.forecastday?.[0];
+
+        if (!forecastDay) {
+          throw new Error('Weather data was not returned for that city.');
+        }
+
+        const { mintemp_c, maxtemp_c } = forecastDay.day;
+        setWeatherData({
+          current: { ...data.current, mintemp_c, maxtemp_c },
+          hourly: forecastDay.hour,
+          weekly: data.forecast.forecastday.slice(1),
+          location: data.location,
+        });
+      } catch (e) {
+        setWeatherData(null);
+        setError(e?.message ? `Error: ${e.message}` : 'Error fetching weather data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, [city]);
+
+  const gradientClass = getGradientClass(hour);
 
   return (
-    <div className="body">
-      <h2 style={{ color: '#fff' }}>
-        {weather && weather.data.weather[0].main === "Clear"  
-          ? <WiDaySunny size={50} />
-          : <WiCloud size={50} />}
-        Weather App
-      </h2>
-
+    <div className={`app ${gradientClass}`}>
       <div className="weather-container">
-        <input
-          type="text"
-          placeholder="Enter city name"
-          value={city}
-          onChange={handleCityChange}
-        />
-        <div>
-          <button onClick={fetchWeatherData}>Search</button>
-        </div>
-
-        {error && <p style={{ color: 'red' }}>{error}</p>} 
-
-        {weather && (
-          <div className="weather-info">
-            <h3>{weather.data.name}</h3>
-            <p>
-          
-              Temperature: {weather.data.main.temp}°C<WiThermometer size={40} />
-            </p>
-            <p>{weather.data.weather[0].description}{weather && weather.data.weather[0].main === "Clear"  
-          ? <WiDaySunny size={50} />
-          : <WiCloud size={50} />}</p>
-            <p>
-              Humidity: {weather.data.main.humidity}% <WiHumidity size={40} />
-              
-            </p>
-          </div>
+        <h2>Weather App</h2>
+        <SearchBar onSearch={setCity} />
+        {loading && <p>Loading...</p>}
+        {error && <p className="status-text">{error}</p>}
+        {!loading && !error && !weatherData && city && <p className="status-text">No weather data found yet.</p>}
+        {weatherData && (
+          <>
+            <CurrentWeather data={weatherData.current} location={weatherData.location} />
+            <HourlyForecast data={weatherData.hourly} />
+            <WeeklyForecast data={weatherData.weekly} />
+          </>
         )}
       </div>
     </div>
@@ -68,3 +86,4 @@ function Weather() {
 }
 
 export default Weather;
+
