@@ -23,7 +23,7 @@ app.get('/api/weather', async (req, res) => {
     console.log(`Fetching weather for city: ${city}`);
     try {
         const response = await fetchFromApi(
-            `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=7`
+            `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=12`
         );
 
         if (!response.ok) {
