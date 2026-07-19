@@ -8,6 +8,11 @@ const fetchFromApi = global.fetch || ((...args) => import('node-fetch').then(({ 
 
 app.use(cors());
 app.use(express.json());
+//TEST route
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+//weather API route
 app.get('/api/weather', async (req, res) => {
     const city = req.query.city?.trim();
     const apiKey = process.env.API_KEY;
