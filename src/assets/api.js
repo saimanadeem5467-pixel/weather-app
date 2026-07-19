@@ -1,6 +1,6 @@
 export const getWeatherData = async (cityName) => {
    const response = await fetch(
-     `https://weather-app-production-e715.up.railway.app//api/weather?city=${encodeURI( cityName)}`
+     `https://weather-app-production-e715.up.railway.app/api/weather?city=${encodeURI( cityName)}`
    );
    const data = await response.json();
    if (!response.ok || data.error) {
